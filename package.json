@@ -1,0 +1,20 @@
+{
+  "name": "aiexp1",
+  "version": "0.0.1",
+  "description": "AI Experiment 01",
+  "main": "world.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node dist/main.js",
+    "watch": "gulp watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^4.0.0",
+    "gulp-typescript": "^5.0.0-alpha.3",
+    "tslint": "^5.11.0",
+    "typescript": "^3.1.3"
+  }
+}
