@@ -8,6 +8,7 @@ export class ImportanceFactorCollection {
 
     constructor(parent: AbstractEntity) {
         this.parent = parent;
+        this.factors = [];
         // todo avoid loanding the full collection when it is not needed
         this.loadCollection();
     }
@@ -46,6 +47,13 @@ export class ImportanceFactorCollection {
         // todo load from actual data
         // todo should coin be a enum?
         // mock for now
-        this.factors.push(new ImportanceFactor("litecoin", "price", ContextType.Question));
+        const mockImportanceFactor = new ImportanceFactor(
+            "litecoin",
+            "price",
+            ContextType.Question,
+        );
+
+        mockImportanceFactor.setImportanceFactorIndex(10);
+        this.factors.push(mockImportanceFactor);
     }
 }

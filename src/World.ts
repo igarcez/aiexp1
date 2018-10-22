@@ -120,8 +120,12 @@ export class World {
 
         while (counter < qty) {
             counter++;
-            this.entities.push(new FemaleEntity(this));
-            this.entities.push(new MaleEntity(this));
+            const female = new FemaleEntity(this);
+            female.setImportanceModifierIndex(1);
+            this.entities.push(female);
+            const male = new MaleEntity(this);
+            male.setImportanceModifierIndex(1);
+            this.entities.push(male);
         }
     }
 
@@ -130,7 +134,11 @@ export class World {
     }
 
     private performPredictions() {
-        this.entities.forEach((entity) => entity.guess());
+        const currentPrice = 100.00;
+        this.entities.forEach((entity) => {
+            const guessModifier = entity.guess("litecoin");
+            console.log(guessModifier * currentPrice);
+        });
     }
 
     private performRanking() {

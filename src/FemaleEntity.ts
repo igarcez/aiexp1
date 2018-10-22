@@ -17,14 +17,29 @@ export class FemaleEntity extends AbstractEntity {
         this.world.spawnEntity(child);
     }
 
+    /**
+     * this is probably the most important algorithm to have balanced, expect changes
+     * @param partner
+     */
     public generateChild(partner: MaleEntity): AbstractEntity {
-        // todo mix up 'genes'
         let child;
         if (this.defineSex() === "male") {
             child = new MaleEntity(this.world);
         } else {
             child = new FemaleEntity(this.world);
         }
+
+        // todo mix up the importanceFactorCollection elements importanceFactor
+        // that both parents have in common
+
+        child.setImportanceModifierIndex(
+            (this.getImportanceModifierIndex() + partner.getImportanceModifierIndex()) / 2,
+        );
+
+        // it is mutation time :D
+        child.setImportanceModifierIndex(
+            child.getImportanceModifierIndex() * this.generateMutation()
+        );
 
         return child;
     }
@@ -37,5 +52,18 @@ export class FemaleEntity extends AbstractEntity {
         } else {
             return "female";
         }
+    }
+
+    private generateMutation(): number {
+        /**
+         * random() returns a random number between 0 and 1, if such number is
+         * less than 0.001, it triggers a mutation
+         */
+        if ((Math.random() * 1000) < 10) {
+            // todo review this
+            return Math.random() + 0.5;
+        }
+
+        return 1;
     }
 }
