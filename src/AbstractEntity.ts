@@ -9,6 +9,7 @@ export class AbstractEntity {
 
     public importanceFactorCollection: ImportanceFactorCollection;
     private importanceModifierIndex: number;
+    private lastGuessValue: number;
 
     constructor(world: World) {
         this.age = 0;
@@ -42,15 +43,17 @@ export class AbstractEntity {
     /**
      * this might be the second most important algorithm of the project, expect changes
      * @param coinName
-     * @return number The multiplier for the price
+     * @return number the price prediction
      */
-    public guess(coinName: string = null): number {
+    public guess(currentValue: number, coinName: string = null): number {
         let factorsImportanceSum = 0;
         this.importanceFactorCollection.byCoin(coinName).forEach((factor) => {
             factorsImportanceSum += factor.getImportanceFactorIndex();
         });
 
-        return this.getImportanceModifierIndex() * factorsImportanceSum;
+        this.lastGuessValue = this.getImportanceModifierIndex() * factorsImportanceSum * currentValue;
+
+        return this.lastGuessValue;
     }
 
     /**
@@ -70,5 +73,9 @@ export class AbstractEntity {
 
     public mate() {
         // should be implemented in the female
+    }
+
+    public getLastGuess(): number {
+        return this.lastGuessValue;
     }
 }

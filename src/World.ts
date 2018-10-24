@@ -3,6 +3,9 @@ import {FemaleEntity} from "./FemaleEntity";
 import {MaleEntity} from "./MaleEntity";
 
 export class World {
+    public targePrice = 50000.00;
+    public populationLimit = 10000;
+
     public entities: AbstractEntity[];
     private shouldExit: boolean;
 
@@ -26,12 +29,15 @@ export class World {
             this.performPredictions();
             // this is where we gonna sleep for some time
             this.performRanking();
+            // this has to happen after ranking to be sure we are not removing
+            // mutated childs
+            this.removeExcessivePopulation();
             this.performAging();
             this.performMating();
             console.log("finished round " + counter);
             // this.report();
             counter += 1;
-            if (counter > 30) {
+            if (counter > 200) {
                 // 2kk~ at round 63~
                 this.shouldExit = true;
             }
@@ -55,6 +61,30 @@ export class World {
             return;
         }
         this.entities.push(entity);
+    }
+
+    public performRanking() {
+        this.entities.sort(
+            (a, b) => {
+                const aLastGuess = a.getLastGuess();
+                const bLastGuess = b.getLastGuess();
+                let aValue;
+                let bValue;
+
+                if (aLastGuess < this.targePrice) {
+                    aValue = this.targePrice - aLastGuess;
+                } else {
+                    aValue = aLastGuess - this.targePrice;
+                }
+
+                if (bLastGuess < this.targePrice) {
+                    bValue = this.targePrice - bLastGuess;
+                } else {
+                    bValue = bLastGuess - this.targePrice;
+                }
+
+                return aValue - bValue;
+            });
     }
 
     private printGenerationReport() {
@@ -135,14 +165,11 @@ export class World {
 
     private performPredictions() {
         const currentPrice = 100.00;
-        this.entities.forEach((entity) => {
-            const guessModifier = entity.guess("litecoin");
-            console.log(guessModifier * currentPrice);
-        });
-    }
 
-    private performRanking() {
-        // console.log("ranking...");
+        this.entities.forEach((entity) => {
+            const pricePrediction = entity.guess(currentPrice, "litecoin");
+            console.log(pricePrediction);
+        });
     }
 
     private performMating() {
@@ -151,5 +178,24 @@ export class World {
 
     private performAging() {
         this.entities.forEach((entity) => entity.aging());
+    }
+
+    private removeExcessivePopulation() {
+        if (this.entities.length <= this.populationLimit) {
+            return;
+        }
+
+        const selectedEntities = [];
+        let counter = 0;
+        this.entities.forEach((entity) => {
+            if (counter > this.populationLimit) {
+                return;
+            }
+
+            selectedEntities.push(entity);
+            counter++;
+        });
+        console.log("removing extra entities");
+        this.entities = selectedEntities;
     }
 }

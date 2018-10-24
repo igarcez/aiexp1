@@ -38,7 +38,7 @@ export class FemaleEntity extends AbstractEntity {
 
         // it is mutation time :D
         child.setImportanceModifierIndex(
-            child.getImportanceModifierIndex() * this.generateMutation()
+            child.getImportanceModifierIndex() * this.generateMutation(),
         );
 
         return child;
@@ -55,15 +55,17 @@ export class FemaleEntity extends AbstractEntity {
     }
 
     private generateMutation(): number {
+        let result = 1;
+
         /**
          * random() returns a random number between 0 and 1, if such number is
          * less than 0.001, it triggers a mutation
          */
-        if ((Math.random() * 1000) < 10) {
+        if ((Math.random() * 100000) < 10) {
             // todo review this
-            return Math.random() + 0.5;
+            result = Math.random() + 0.5999;
         }
 
-        return 1;
+        return result;
     }
 }
