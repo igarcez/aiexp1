@@ -62,7 +62,6 @@ export class FemaleEntity extends AbstractEntity {
          * less than 0.001, it triggers a mutation
          */
         if ((Math.random() * 100000) < 10) {
-            // todo review this
             result = Math.random() + 0.5999;
         }
 

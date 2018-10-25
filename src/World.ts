@@ -35,10 +35,9 @@ export class World {
             this.performAging();
             this.performMating();
             console.log("finished round " + counter);
-            // this.report();
+
             counter += 1;
-            if (counter > 200) {
-                // 2kk~ at round 63~
+            if (counter > 300) {
                 this.shouldExit = true;
             }
         }
@@ -47,7 +46,6 @@ export class World {
     }
 
     public findMale(): MaleEntity {
-        // todo sort entities by performance, so this return the best male
         // todo implement something to make this to not be the same male always, or maybe it should be?
         for (const entity of this.entities) {
             if (entity.sex === "male" && entity.alive) {
@@ -56,7 +54,7 @@ export class World {
         }
     }
 
-    public spawnEntity(entity) {
+    public spawnEntity(entity: AbstractEntity) {
         if (typeof entity === "undefined") {
             return;
         }
@@ -135,7 +133,7 @@ export class World {
             return;
         }
 
-        const aliveEntities = [];
+        const aliveEntities = Array<AbstractEntity>();
         this.entities.forEach((entity) => {
             if (entity.alive) {
                 aliveEntities.push(entity);
@@ -185,7 +183,7 @@ export class World {
             return;
         }
 
-        const selectedEntities = [];
+        const selectedEntities = Array<AbstractEntity>();
         let counter = 0;
         this.entities.forEach((entity) => {
             if (counter > this.populationLimit) {
