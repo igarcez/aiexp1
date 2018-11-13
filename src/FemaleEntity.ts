@@ -7,6 +7,7 @@ export class FemaleEntity extends AbstractEntity {
 
     constructor(world: World) {
         super(world);
+        this.world.statistics.addFemale(1);
         this.sex = "female";
     }
 

@@ -3,6 +3,7 @@ import {World} from "./World";
 
 export class AbstractEntity {
     public age: number;
+    // todo this needs to be private
     public alive: boolean;
     public world: World;
     public sex: string;
@@ -15,6 +16,8 @@ export class AbstractEntity {
         this.age = 0;
         this.alive = true;
         this.world = world;
+
+        // todo this needs to be manually set
         this.importanceFactorCollection = new ImportanceFactorCollection(this);
     }
 
@@ -48,8 +51,20 @@ export class AbstractEntity {
     public guess(currentValue: number, coinName: string = null): number {
         let factorsImportanceSum = 0;
         this.importanceFactorCollection.byCoin(coinName).forEach((factor) => {
+            /**
+             * @todo review this
+             * how can we get the most value from a collection of importance factors?
+             */
             factorsImportanceSum += factor.getImportanceFactorIndex();
         });
+
+        /**
+         * a zero here would render the guess 0 no matter the current value,
+         * maybe that's okay? it would mean this entity is a failure
+         */
+        if (factorsImportanceSum === 0) {
+            factorsImportanceSum = 1;
+        }
 
         this.lastGuessValue = this.getImportanceModifierIndex() * factorsImportanceSum * currentValue;
 

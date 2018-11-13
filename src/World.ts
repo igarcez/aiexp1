@@ -1,21 +1,26 @@
 import {AbstractEntity} from "./AbstractEntity";
 import {FemaleEntity} from "./FemaleEntity";
 import {MaleEntity} from "./MaleEntity";
+import {Statistics} from "./Statistics";
 
 export class World {
-    public targePrice = 50000.00;
-    public populationLimit = 10000;
+    public targetPrice = 50000.00;
+    public populationLimit = 15000;
+    public rounds = 100;
 
     public entities: AbstractEntity[];
+    public statistics: Statistics;
+
     private shouldExit: boolean;
 
     constructor() {
         this.entities = [];
+        this.statistics = new Statistics();
         this.shouldExit = false;
     }
 
     public run() {
-        this.addFirstCouples(3);
+        this.addFirstCouples(100);
         let counter = 0;
         while (true) {
             this.printGenerationReport();
@@ -37,7 +42,7 @@ export class World {
             console.log("finished round " + counter);
 
             counter += 1;
-            if (counter > 300) {
+            if (counter > this.rounds) {
                 this.shouldExit = true;
             }
         }
@@ -69,16 +74,16 @@ export class World {
                 let aValue;
                 let bValue;
 
-                if (aLastGuess < this.targePrice) {
-                    aValue = this.targePrice - aLastGuess;
+                if (aLastGuess < this.targetPrice) {
+                    aValue = this.targetPrice - aLastGuess;
                 } else {
-                    aValue = aLastGuess - this.targePrice;
+                    aValue = aLastGuess - this.targetPrice;
                 }
 
-                if (bLastGuess < this.targePrice) {
-                    bValue = this.targePrice - bLastGuess;
+                if (bLastGuess < this.targetPrice) {
+                    bValue = this.targetPrice - bLastGuess;
                 } else {
-                    bValue = bLastGuess - this.targePrice;
+                    bValue = bLastGuess - this.targetPrice;
                 }
 
                 return aValue - bValue;
@@ -91,18 +96,14 @@ export class World {
             alive: 0,
             entities: this.entities.length,
             sex: {
-                female: 0,
-                male: 0,
+                female: this.statistics.getNumberOfFemales(),
+                male: this.statistics.getNumberOfMales(),
             },
         };
 
         this.entities.forEach((entity) => {
             for (const property in entity) {
                 if (!entity.hasOwnProperty(property)) {
-                    continue;
-                }
-
-                if (property === "world") {
                     continue;
                 }
 
@@ -113,7 +114,7 @@ export class World {
                     continue;
                 }
 
-                if (property === "sex" || property === "age") {
+                if (property === "age") {
                     if (typeof data[property][entity[property]] === "undefined") {
                         data[property][entity[property]] = 0;
                     }
@@ -137,6 +138,13 @@ export class World {
         this.entities.forEach((entity) => {
             if (entity.alive) {
                 aliveEntities.push(entity);
+            } else {
+                // todo move this to the die method of the entity
+                if (entity.sex === "male") {
+                    this.statistics.removeMale(1);
+                } else {
+                    this.statistics.removeFemale(1);
+                }
             }
         });
 
@@ -148,6 +156,7 @@ export class World {
 
         while (counter < qty) {
             counter++;
+            // todo add the importanceFactorCollection mock here
             const female = new FemaleEntity(this);
             female.setImportanceModifierIndex(1);
             this.entities.push(female);
@@ -183,17 +192,14 @@ export class World {
             return;
         }
 
-        const selectedEntities = Array<AbstractEntity>();
         let counter = 0;
         this.entities.forEach((entity) => {
             if (counter > this.populationLimit) {
-                return;
+                entity.die();
             }
 
-            selectedEntities.push(entity);
             counter++;
         });
         console.log("removing extra entities");
-        this.entities = selectedEntities;
     }
 }

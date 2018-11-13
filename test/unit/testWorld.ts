@@ -26,16 +26,16 @@ import {World} from "../../src/World";
         world.spawnEntity(male2);
         world.spawnEntity(male3);
 
-        world.targePrice = 2000;
+        world.targetPrice = 2000;
 
         world.performRanking();
         assert(world.findMale().getLastGuess() === 1150);
 
-        world.targePrice = 800;
+        world.targetPrice = 800;
         world.performRanking();
         assert(world.findMale().getLastGuess() === 900);
 
-        world.targePrice = 1000;
+        world.targetPrice = 1000;
         world.performRanking();
         assert(world.findMale().getLastGuess() === 950);
     }
